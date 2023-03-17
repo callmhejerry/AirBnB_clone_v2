@@ -2,6 +2,12 @@
 """ Module for testing file storage"""
 import unittest
 from models.base_model import BaseModel
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
+from models.user import User
 from models import storage
 import os
 
@@ -21,7 +27,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except Exception:
             pass
 
     def test_obj_list_empty(self):
@@ -37,9 +43,60 @@ class test_fileStorage(unittest.TestCase):
 
     def test_all(self):
         """ __objects is properly returned """
-        new = BaseModel()
+        baseModel = BaseModel()
+        state = State()
+        user = User()
+        city = City()
+        place = Place()
+        review = Review()
+        amenity = Amenity()
+
+        # when no arguement is given, obj=None
         temp = storage.all()
         self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 7)
+        
+        # when state is given
+        temp = storage.all(State)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(state), temp)
+
+        # when User is given
+        temp = storage.all(User)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(user), temp)
+
+        # when City is given
+        temp = storage.all(City)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(city), temp)
+
+        # when Place is given
+        temp = storage.all(Place)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(place), temp)
+
+        # when Review is given
+        temp = storage.all(Review)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(review), temp)
+
+        # when Amenity is given
+        temp = storage.all(Amenity)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(amenity), temp)
+
+        # when BaseModel is given
+        temp = storage.all(BaseModel)
+        self.assertIsInstance(temp, dict)
+        self.assertEqual(len(temp), 1)
+        self.assertIn(storage.get_obj_key(baseModel), temp)
 
     def test_base_model_instantiation(self):
         """ File is not created on BaseModel save """
@@ -107,3 +164,30 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_delete(self):
+        ''' object deleted '''
+
+        # test State object deleted
+        state1 = State()
+        state2 = State()
+        temp = storage.all(State)
+        state1_key = storage.get_obj_key(state1)
+        state2_key = storage.get_obj_key(state2)
+        number_of_state = len(temp)
+        storage.delete(state1)
+        new_temp = storage.all(State)
+        new_number = len(new_temp)
+        self.assertEqual(new_number, number_of_state - 1)
+        self.assertNotIn(state1_key, new_temp)
+
+        # test when obj = None
+        city1 = City()
+        temp2 = storage.all(City)
+        city1_key = storage.get_obj_key(city1)
+        len_temp2 = len(temp2)
+        storage.delete()
+        new_temp2 = storage.all(City)
+        new_len = len(new_temp2)
+        self.assertEqual(len_temp2, new_len)
+        self.assertIn(city1_key, new_temp2)
