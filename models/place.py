@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from models.amenity import Amenity
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 import os
@@ -36,7 +35,12 @@ class Place(BaseModel, Base):
     amenity_ids = []
     cities = relationship("City", back_populates='places')
     user = relationship("User", back_populates="places", cascade='delete')
-    reviews = relationship("Review", cascade='delete', back_populates='place')
+    reviews = relationship(
+                           "Review",
+                           cascade='delete',
+                           back_populates='place'
+                           ) if os.\
+        getenv('HBNB_TYPE_STORAGE') == 'db' else None
 
     @property
     def amenities(self):
@@ -62,6 +66,7 @@ class Place(BaseModel, Base):
         def amenities(self):
             """Returns the amenities of this Place"""
             from models import storage
+            from models.amenity import Amenity
             amenities_of_place = []
             for value in storage.all(Amenity).values():
                 if value.id in self.amenity_ids:
@@ -71,6 +76,18 @@ class Place(BaseModel, Base):
         @amenities.setter
         def amenities(self, value):
             """Adds an amenity to this Place"""
+            from models.amenity import Amenity
             if type(value) is Amenity:
                 if value.id not in self.amenity_ids:
                     self.amenity_ids.append(value.id)
+
+        @property
+        def reviews(self):
+            """Returns the reviews of this Place"""
+            from models import storage
+            from models.review import Review
+            reviews_of_place = []
+            for value in storage.all(Review).values():
+                if value.place_id == self.id:
+                    reviews_of_place.append(value)
+            return reviews_of_place
