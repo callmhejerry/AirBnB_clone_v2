@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
+from models.amenity import Amenity
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
+import os
+
 
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id', String(60),
@@ -50,6 +53,24 @@ class Place(BaseModel, Base):
         if isinstance(obj, Amenity):
             self.amenity_ids.append(obj.id)
 
-    amenities = relationship('Amenity', secondary=place_amenity,
-                             viewonly=False,
-                             back_populates='place_amenities')
+    if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        amenities = relationship('Amenity', secondary=place_amenity,
+                                 viewonly=False,
+                                 back_populates='place_amenities')
+    else:
+        @property
+        def amenities(self):
+            """Returns the amenities of this Place"""
+            from models import storage
+            amenities_of_place = []
+            for value in storage.all(Amenity).values():
+                if value.id in self.amenity_ids:
+                    amenities_of_place.append(value)
+            return amenities_of_place
+
+        @amenities.setter
+        def amenities(self, value):
+            """Adds an amenity to this Place"""
+            if type(value) is Amenity:
+                if value.id not in self.amenity_ids:
+                    self.amenity_ids.append(value.id)
