@@ -34,20 +34,22 @@ class Place(BaseModel, Base):
     cities = relationship("City", back_populates='places')
     user = relationship("User", back_populates="places", cascade='delete')
     reviews = relationship("Review", cascade='delete', back_populates='place')
+
+    @property
+    def amenities(self):
+        '''returns the amenity_ids'''
+        return self.amenity_ids
+
+    @amenities.setter
+    def amenities(self, obj):
+        '''
+        handles append method for adding an Amenity.id
+        to the attribute amenity_ids
+        '''
+        from models.amenity import Amenity
+        if isinstance(obj, Amenity):
+            self.amenity_ids.append(obj)
+
     amenities = relationship('Amenity', secondary=place_amenity,
                              viewonly=False,
                              back_populates='place_amenities')
-#     @property
-#     def amenities(self):
-#            '''returns the amenity_ids'''
-#            return self.amenity_ids
-    
-#     @amenities.setter
-#     def amenities(self, obj):
-#            '''
-#            handles append method for adding an Amenity.id
-#            to the attribute amenity_ids
-#            '''
-#            from models.amenity import Amenity
-#            if isinstance(obj, Amenity):
-#                   self.amenity_ids.append(obj)
