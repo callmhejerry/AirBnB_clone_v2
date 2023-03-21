@@ -37,3 +37,16 @@ class Place(BaseModel, Base):
     amenities = relationship('Amenity', secondary=place_amenity,
                              viewonly=False,
                              back_populates='place_amenities')
+    @property
+    def amenities(self):
+           return self.amenity_ids
+    
+    @amenities.setter
+    def amenities(self, obj):
+           '''
+           handles append method for adding an Amenity.id
+           to the attribute amenity_ids
+           '''
+           from models.amenity import Amenity
+           if isinstance(obj, Amenity):
+                  self.amenity_ids.append(obj)
