@@ -42,25 +42,13 @@ class Place(BaseModel, Base):
                            ) if os.\
         getenv('HBNB_TYPE_STORAGE') == 'db' else None
 
-    @property
-    def amenities(self):
-        '''returns the amenity_ids'''
-        return self.amenity_ids
-
-    @amenities.setter
-    def amenities(self, obj):
-        '''
-        handles append method for adding an Amenity.id
-        to the attribute amenity_ids
-        '''
-        from models.amenity import Amenity
-        if isinstance(obj, Amenity):
-            self.amenity_ids.append(obj.id)
-
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-        amenities = relationship('Amenity', secondary=place_amenity,
-                                 viewonly=False,
-                                 back_populates='place_amenities')
+        amenities = relationship(
+            'Amenity',
+            secondary=place_amenity,
+            viewonly=False,
+            backref='place_amenities'
+        )
     else:
         @property
         def amenities(self):
