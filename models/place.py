@@ -40,7 +40,7 @@ class Place(BaseModel, Base):
                            cascade='delete',
                            back_populates='place'
                            ) if os.\
-        getenv('HBNB_TYPE_STORAGE') == 'db' else None
+        getenv('HBNB_TYPE_STORAGE') == 'db' else ""
 
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         amenities = relationship(
