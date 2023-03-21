@@ -48,8 +48,8 @@ class Place(BaseModel, Base):
         '''
         from models.amenity import Amenity
         if isinstance(obj, Amenity):
-            self.amenity_ids.append(obj)
+            self.amenity_ids.append(obj.id)
 
     amenities = relationship('Amenity', secondary=place_amenity,
                              viewonly=False,
-                             back_populates='place_amenities')
+                             backref='place_amenities')
