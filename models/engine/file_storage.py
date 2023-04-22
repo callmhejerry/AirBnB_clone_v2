@@ -73,3 +73,7 @@ class FileStorage:
         obj_key = self.get_obj_key(obj)
         if obj_key in FileStorage.__objects.keys():
             del(FileStorage.__objects[obj_key])
+
+    def close(self):
+        '''deserialize json to object'''
+        self.reload()
