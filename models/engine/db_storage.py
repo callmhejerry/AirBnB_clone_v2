@@ -43,12 +43,11 @@ class DBStorage():
         '''Retrieves all objects depending of the class name given'''
         objs = None
         if cls is None:
-            objs = self.__session.query().all()
+            objs = self.__session.query()
         else:
-            print("printing class")
-            objs = self.__session.query(eval(cls)).all()
-
+            objs = self.__session.query(cls)
         dct = {}
+        
         for obj in objs:
             key = obj.to_dict()['__class__'] + '.' + obj.id
             dct[key] = obj
@@ -77,4 +76,4 @@ class DBStorage():
 
     def close(self):
         '''close'''
-        self.__session.remove()
+        self.__session.close()
