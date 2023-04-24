@@ -1,8 +1,8 @@
 #!/usr/bin/python3
-'''
+"""
 A script that starts a flask application
 and displays a lists of all states
-'''
+"""
 
 from models import storage
 from models.state import State
@@ -13,14 +13,14 @@ app = Flask(__name__)
 
 @app.route('/states_list', strict_slashes=False)
 def states_list():
-    '''Displays a list of states'''
+    """Displays a list of states"""
     all_states = storage.all(State).values()
     return render_template('7-states_list.html', states=all_states)
 
 
 @app.teardown_appcontext
 def tear_down(exception):
-    '''removes the current SQLAlchemy session'''
+    """removes the current SQLAlchemy session"""
     storage.close()
 
 
