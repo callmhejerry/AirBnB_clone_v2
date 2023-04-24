@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 '''
-A script that starts a Flask web application
+A script that starts a flask application
+and displays a lists of all states
 '''
-from flask import Flask, render_template
+
 from models import storage
 from models.state import State
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
