@@ -15,11 +15,7 @@ if __name__ == "__main__":
     @app.route('/cities_by_states', strict_slashes=False)
     def cities_by_states():
         '''Displays the cities and states'''
-        all_state = None
-        if getenv("HBNB_TYPE_STORAGE") == "db":
-            all_state = storage.all(State).values()
-        else:
-            all_state = storage.all(State).values()
+        all_state = storage.all(State).values()
         return render_template('8-cities_by_states.html', states=all_state)
 
     @app.teardown_appcontext
